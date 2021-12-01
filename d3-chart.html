@@ -1,0 +1,194 @@
+ <!DOCTYPE html>
+ <html>
+  <head>
+  <meta charset="utf-8">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <title>D3-v7 </title> </head>
+ </html>
+ 
+  <style>
+  
+   
+     .p-t-3{ padding-top:3px;}
+     
+   .box{
+    border: 1px solid #eee;
+    padding: 4px;
+    margin-right: 15px;
+    width: 10px;
+    height: 10px;
+    background: #fa2;
+    float: left;
+	}
+	
+	.custom-select{ 
+	border:1px solid #d2d2d2;
+	padding:5px;
+	width:100%;-webkit-appearance: none;"
+	
+	}
+   
+  </style>
+ 
+
+ <h3>Objectives </h3>
+ <div> 
+ <select class="custom-select"> 
+ <option value="1"> Objective 1 </option> 
+ <option value="2"> Objective 2 </option> 
+ <option value="3"> Objective 3 </option> 
+ <option value="4"> Objective 4 </option> 
+ </select> </div>
+ <br> <br>
+
+<!-- Create a div where the graph will take place -->
+<div id="my_dataviz"></div>
+
+ <h3>Action Items </h3>
+ 
+  <p> <span class="box" style="background:#193498"> </span>  <span class="p-t-3" >  RESPONSIBLE PARTY will utilize knowledge gained and skill learned in counseling to monitor and control emotional reactions. </span> </p> 
+  <p> <span class="box" style="background:#113CFC"> </span>  <span class="p-t-3" > RESPONSIBLE PARTY will be able to recognize his mental health symptoms and/or diagnosis(es) and the need for treatment </span> </p> 
+  <p>  <span class="box" style="background:#1597E5"> </span>   <span class="p-t-3" > RESPONSIBLE PARTY will utilize knowledge gained and skill learned in counseling to monitor and control emotional reactions. </span> </p> 
+  
+
+
+<script>
+
+
+
+//Objective 
+   //Date
+   //ActionItem
+    //-- Rating 
+   
+    
+//Rating 
+   //--text
+   //--value
+
+			 
+			let margin = { top: 30, right: 30, bottom: 20, left: 150 },
+				width = 1024 - margin.left - margin.right,
+				height = 300 - margin.top - margin.bottom;
+
+			 
+			let svg = d3.select("#my_dataviz")
+				.append("svg")
+				.attr("width", width + margin.left + margin.right)
+				.attr("height", height + margin.top + margin.bottom)
+				.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+ 
+			
+			//101 - action item Id - 12-rating value
+			
+			let blueColorPlate=["#193498","#113CFC","#1597E5","#69DADB"];
+			 
+			let jsonData = [
+				{
+					"group": "1/1/2021",
+					"101": 5,
+					"102": 15,
+					"103": 10
+				},
+				{
+					"group": "1/15/2021",
+					"101": 5,
+					"102": 10,
+					"103": 10
+				},
+				{
+					"group": "1/20/2021",
+					"101": 10,
+					"102": 15,
+					"103": 10
+				},
+				{
+					"group": "1/30/2021",
+					"101": 5,
+					"102": 20,
+					"103": 5
+				},
+				{
+					"group": "2/1/2021",
+					"101": 5,
+					"102": 15,
+					"103": 10
+				},
+				{
+					"group": "2/15/2021",
+					"101": 15,
+					"102": 15,
+					"103": 15
+				},
+				{
+					"group": "2/20/2021",
+					"101": 10,
+					"102": 15,
+					"103": 10
+				},
+				{
+					"group": "2/30/2021",
+					"101": 10,
+					"102": 10,
+					"103": 10
+				}
+			];
+
+			// List of subgroups = header of the csv files = soil condition here
+			let subgroups = ["101", "102","103"];
+			
+
+			// List of groups = species here = value of the first column called group -> I show them on the X axis
+			let groups = ["1/1/2021", "1/15/2021", "1/20/2021","1/30/2021","2/1/2021", "2/15/2021", "2/20/2021","2/30/2021"];
+
+			// Add X axis
+			let x = d3.scaleBand()
+				.domain(groups)
+				.range([0, width])
+				.padding(0.3)
+
+			svg.append("g")
+				.attr("transform", "translate(0," + height + ")")
+				.call(d3.axisBottom(x).tickSize(10));
+
+			// Add Y axis
+			let y = d3.scaleLinear().domain([0, 20]).range([height, 0]);
+			
+			var y_axis = d3.axisLeft(y).tickValues([0, 5, 10, 15, 20])
+				.tickFormat((d, i) => ['None', 'Minimal', 'Moderate', 'Substantial', 'Full Progress'][i]);
+
+			svg.append("g").call(y_axis);
+			 
+			// Another scale for subgroup position?
+			let xSubgroup = d3.scaleBand()
+				.domain(subgroups)
+				.range([0, x.bandwidth()])
+				.padding(0.05)
+
+			// color palette = one color per subgroup
+			let color = d3.scaleOrdinal()
+				.domain(subgroups)
+				.range(['#e41a1c', '#377eb8', '#4daf4a']);
+				 
+			// Show the bars
+			svg.append("g")
+				.selectAll("g")
+				// Enter in data = loop group per group
+				.data(jsonData)
+				.enter()
+				.append("g")
+				.attr("transform", function (d) { return "translate(" + x(d.group) + ",0)"; })
+				.selectAll("rect")
+				.data(function (d) {
+					return subgroups.map(function (key,index) {
+						return { key: key, value: d[key],index:index };
+					});
+				})
+				.enter().append("rect")
+				.attr("x", function (d) { return xSubgroup(d.key); })
+				.attr("y", function (d) { return y(d.value); })
+				.attr("width", xSubgroup.bandwidth())
+				.attr("height", function (d) { return height - y(d.value); })
+				.attr("fill",function (d) { return blueColorPlate[d.index]; });
+				
+</script>
