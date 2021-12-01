@@ -3,7 +3,12 @@
 
 <head>
 	<meta charset="utf-8">
+	
 	<script src="https://d3js.org/d3.v7.min.js"></script>
+	<script
+  src="https://code.jquery.com/jquery-3.6.0.min.js"
+  integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+  crossorigin="anonymous"></script>
 	<title>D3-v7 </title>
 </head>
 
@@ -20,7 +25,6 @@
 			margin-right: 15px;
 			width: 10px;
 			height: 10px;
-			background: #fa2;
 			float: left;
 		}
 
@@ -49,16 +53,19 @@
 	<!-- Create a div where the graph will take place -->
 	<div id="my_dataviz"></div>
 	<h3>Action Items </h3>
-	<p> <span class="box" style="background:#193498"> </span> <span class="p-t-3"> RESPONSIBLE PARTY will utilize
-			knowledge
-			gained and skill learned in counseling to monitor and control emotional reactions. </span> </p>
-	<p> <span class="box" style="background:#113CFC"> </span> <span class="p-t-3"> RESPONSIBLE PARTY will be able to
-			recognize his mental health symptoms and/or diagnosis(es) and the need for treatment </span> </p>
-	<p> <span class="box" style="background:#1597E5"> </span> <span class="p-t-3"> RESPONSIBLE PARTY will utilize
-			knowledge
-			gained and skill learned in counseling to monitor and control emotional reactions. </span> </p>
-
-
+	<div id="actionItemsList">
+	
+	
+		<p> <span class="box"> </span> <span class="p-t-3"> RESPONSIBLE PARTY will utilize
+				knowledge
+				gained and skill learned in counseling to monitor and control emotional reactions. </span> </p>
+		<p> <span class="box"> </span> <span class="p-t-3"> RESPONSIBLE PARTY will be able to
+				recognize his mental health symptoms and/or diagnosis(es) and the need for treatment </span> </p>
+		<p> <span class="box"> </span> <span class="p-t-3"> RESPONSIBLE PARTY will utilize
+				knowledge
+				gained and skill learned in counseling to monitor and control emotional reactions. </span> </p>
+	
+	</div>
 	<script>
 
 		//Objective 
@@ -86,7 +93,8 @@
 
 		//101 - action item Id - 12-rating value
 
-		let blueColorPlate = ["#193498", "#113CFC", "#1597E5", "#69DADB"];
+        //add more colors
+		let blueColorPlate = ["#193498", "#113CFC", "#1597E5", "#69DADB","#afb7d8","#adb1c2"];
 
 		let jsonData = [
 			{
@@ -169,12 +177,7 @@
 			.domain(subgroups)
 			.range([0, x.bandwidth()])
 			.padding(0.05)
-
-		// color palette = one color per subgroup
-		let color = d3.scaleOrdinal()
-			.domain(subgroups)
-			.range(['#e41a1c', '#377eb8', '#4daf4a']);
-
+ 
 		// Show the bars
 		svg.append("g")
 			.selectAll("g")
@@ -195,6 +198,16 @@
 			.attr("width", xSubgroup.bandwidth())
 			.attr("height", function (d) { return height - y(d.value); })
 			.attr("fill", function (d) { return blueColorPlate[d.index]; });
+			
+			
+			//action item colors as per bar chart color 
+			//Add more colors in color plate as per number of action items 
+			//now we have 3 action items 
+			$("#actionItemsList .box").each(function(i,element){
+			
+			 $(element).css({"background":blueColorPlate[i]});
+			
+			});
 
 	</script>
 
